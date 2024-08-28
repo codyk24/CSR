@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refrigeration Unit Inspection Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Refrigeration Unit Inspection Form</h1>
+
+    <form>
+        <!-- General Information -->
+        <label for="inspector-name">Inspector Name</label>
+        <input type="text" id="inspector-name" name="inspector-name" value="REPLACE_InspectorName" required>
+
+        <label for="date">Date of Inspection</label>
+        <input type="date" id="date" name="date" value="REPLACE_date" required>
+
+        <label for="unit-id">Refrigeration Unit ID</label>
+        <input type="text" id="unit-id" name="unit-id" value="REPLACE_RefrigerationUnitID" required>
+
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" value="REPLACE_Location" required>
+
+        <!-- Temperature Checks -->
+        <h2>Temperature Checks</h2>
+
+        <label for="ambient-temperature">Ambient Temperature (°C)</label>
+        <input type="number" id="ambient-temperature" name="ambient-temperature" step="0.1" value="REPLACE_AmbientTemp" required>
+
+        <label for="unit-temperature">Unit Temperature (°C)</label>
+        <input type="number" id="unit-temperature" name="unit-temperature" step="0.1" value="REPLACE_UnitTemp" required>
+
+        <!-- Visual Inspection -->
+        <h2>Visual Inspection</h2>
+
+        <label for="door-seals">Door Seals Condition</label>
+        <select id="door-seals" name="door-seals" required>
+            <option value="">Select condition</option>
+            <option value="good">Good</option>
+            <option value="minor-damage">Minor Damage</option>
+            <option value="severe-damage">Severe Damage</option>
+        </select>
+
+        <label for="coil-condition">Coil Condition</label>
+        <select id="coil-condition" name="coil-condition" required>
+            <option value="">Select condition</option>
+            <option value="clean">Clean</option>
+            <option value="dirty">Dirty</option>
+            <option value="damaged">Damaged</option>
+        </select>
+
+        <label for="insulation">Insulation Condition</label>
+        <select id="insulation" name="insulation" required>
+            <option value="">Select condition</option>
+            <option value="good">Good</option>
+            <option value="worn">Worn</option>
+            <option value="damaged">Damaged</option>
+        </select>
+
+        <!-- Additional Notes -->
+        <label for="additional-notes">Additional Notes</label>
+        <textarea id="additional-notes" name="additional-notes" rows="4" value="REPLACE_AdditionalComments"></textarea>
+
+        <!-- Submit Button -->
+        <button type="submit">Submit Inspection</button>
+    </form>
+</body>
+
+</html>
