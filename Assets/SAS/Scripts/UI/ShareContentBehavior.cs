@@ -1,29 +1,41 @@
+using DG.Tweening.Plugins.Core.PathCore;
 using UnityEngine;
-// using NativeShareNamespace;
+using System.IO;
+using NativeShareNamespace;
 
 public class ShareContentBehavior : MonoBehaviour
 {
     #region Members
 
-    // private NativeShare m_nativeShare;
+    [SerializeField]
+    private string DebugPath;
 
-    // #endregion
+    private NativeShare m_nativeShare;
 
-    // #region Methods
+    #endregion
 
-    // // Start is called before the first frame update
-    // void Start()
-    // {
-    //     m_nativeShare = new NativeShare();
-    //     m_nativeShare.Clear();
-    // }
+    #region Methods
 
-    // public void ShareContent()
-    // {
-    //     string teamString = TeamManager.Instance.PrintTeams();
-    //     m_nativeShare.SetText(teamString);
-    //     m_nativeShare.Share();
-    // }
+    // Start is called before the first frame update
+    void Start()
+    {
+        m_nativeShare = new NativeShare();
+        m_nativeShare.Clear();
+
+        ConvertInputsToPDF.Instance.PdfBuildFinished += PDFConverter_PdfBuildFinished;
+    }
+
+    private void PDFConverter_PdfBuildFinished(object sender, PDFEventArgs e)
+    { 
+        ShareContent(e.path);
+    }
+
+    public void ShareContent(string filePath)
+    {
+        Debug.LogFormat("DEBUG... PDF path: {0}", filePath);
+        //m_nativeShare.AddFile(filePath, null);
+        //m_nativeShare.Share();
+    }
 
     #endregion
 }

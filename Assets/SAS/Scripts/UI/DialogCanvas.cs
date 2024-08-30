@@ -103,7 +103,7 @@ namespace SAS.UI
 			ShowInternal(title, message, accent, primaryLabel, null, ignoreLocalization);
 		}
 
-		private void ShowInternal(string title, string message, Accent accent, string primaryLabel, System.Action primaryAction, bool ignoreLocalization)
+        private void ShowInternal(string title, string message, Accent accent, string primaryLabel, System.Action primaryAction, bool ignoreLocalization)
 		{
 			ShowInternal(title, message, accent, primaryLabel, string.Empty, string.Empty, primaryAction, null, null, ignoreLocalization);
 		}
@@ -251,7 +251,7 @@ namespace SAS.UI
 					return m_directionalColor;
 
 				case Accent.Caution:
-					return m_warningColor;
+					return m_cautionColor;
 
 				case Accent.Warning:
 					return m_warningColor;

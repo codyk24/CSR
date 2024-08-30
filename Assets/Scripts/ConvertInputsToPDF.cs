@@ -1,11 +1,39 @@
 using System.IO;
-using System.Collections.Generic;
+using System;
+//using DinkToPdf;
+using SAS;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 using UnityEngine;
+using TheArtOfDev.HtmlRenderer.Core;
+using UnityEngine.EventSystems;
+using SAS.UI;
 using PdfSharp;
 using PdfSharp.Pdf;
+using System.Net.Mail;
+using System.Net;
+using UnityEngine.XR;
 
-public class ConvertInputsToPDF : MonoBehaviour
+public class PDFEventArgs : EventArgs
+{
+    #region Properties
+
+    public string path { get; protected set; }
+
+    #endregion
+
+    #region Constructors
+
+    public PDFEventArgs(string filePath)
+    {
+        path = filePath;
+    }
+
+    #endregion
+}
+
+public delegate void PDFEventArgsHandler(object sender, PDFEventArgs e);
+
+public class ConvertInputsToPDF : BaseMonoSingleton<ConvertInputsToPDF>
 {
     [SerializeField]
     TMPro.TMP_InputField m_inspectorName;
@@ -33,6 +61,9 @@ public class ConvertInputsToPDF : MonoBehaviour
     [SerializeField]
     string DebugSavePath;
 
+    public event PDFEventArgsHandler PdfBuildStarted;
+    public event PDFEventArgsHandler PdfBuildFinished;
+
     private void Start()
     {
         
@@ -43,32 +74,83 @@ public class ConvertInputsToPDF : MonoBehaviour
         TextAsset htmlDoc = Resources.Load<TextAsset>("HTML/RefrigerationInspection");
 
         string htmlString = htmlDoc.text;
+
         // Replace the placeholders in the html string with the form values
+        htmlString = htmlString.Replace("REPLACE_InspectorName", m_inspectorName.text);
+        htmlString = htmlString.Replace("REPLACE_date", m_dateOfInspection.text);
+        htmlString = htmlString.Replace("REPLACE_RefrigerationUnitID", m_refrigerationUnitID.text);
+        htmlString = htmlString.Replace("REPLACE_Location", m_location.text);
+        htmlString = htmlString.Replace("REPLACE_AmbientTemp", m_ambientTemperature.text);
+        htmlString = htmlString.Replace("REPLACE_UnitTemp", m_unitTemperature.text);
+        htmlString = htmlString.Replace("REPLACE_AdditionalComments", m_additionalComments.text);
 
-        //value="REPLACE_InspectorName"
-        htmlString.Replace("REPLACE_InspectorName", m_inspectorName.text);
+        Debug.LogFormat("m_inspectorName.text: {0}", m_inspectorName.text);
+        Debug.LogFormat("m_dateOfInspection.text: {0}", m_dateOfInspection.text);
+        Debug.LogFormat("m_refrigerationUnitID.text: {0}", m_refrigerationUnitID.text);
+        Debug.LogFormat("m_location.text: {0}", m_location.text);
+        Debug.LogFormat("m_ambientTemperature.text: {0}", m_ambientTemperature.text);
+        Debug.LogFormat("m_unitTemperature.text: {0}", m_unitTemperature.text);
+        Debug.LogFormat("m_additionalComments.text: {0}", m_additionalComments.text);
 
-        //value="REPLACE_date"
-        htmlString.Replace("REPLACE_date", m_dateOfInspection.text);
+        var client = new SmtpClient("smtp.gmail.com", 587)
+        {
+            Credentials = new NetworkCredential("swissarmysoftware@gmail.com", "onqy zcmx lcfo qwey"),
+            EnableSsl = true
+        };
 
-        //value="REPLACE_RefrigerationUnitID"
-        htmlString.Replace("REPLACE_RefrigerationUnitID", m_refrigerationUnitID.text);
+        MailAddress addressFrom = new MailAddress("swissarmysoftware@gmail.com", "Swiss Army Software");
+        MailAddress addressTo = new MailAddress("codykairis24@gmail.com", "Cody Kairis");
 
-        //value="REPLACE_Location"
-        htmlString.Replace("REPLACE_Location", m_location.text);
+        MailMessage message = new MailMessage(addressFrom, addressTo);
+        message.Subject = "Test Subject";
+        message.IsBodyHtml = true;
 
-        //value="REPLACE_AmbientTemp"
-        htmlString.Replace("REPLACE_AmbientTemp", m_ambientTemperature.text);
+        message.Body = htmlString;
+        client.Send(message);
 
-        //value="REPLACE_UnitTemp"
-        htmlString.Replace("REPLACE_UnitTemp", m_unitTemperature.text);
+        // Convert HTML string to PDF using DinkToPDF
+        //var converter = new BasicConverter(new PdfTools());
 
-        //value="REPLACE_AdditionalComments"
-        htmlString.Replace("REPLACE_AdditionalComments", m_additionalComments.text);
+        //var doc = new HtmlToPdfDocument()
+        //{
+        //    GlobalSettings = {
+        //                 ColorMode = ColorMode.Color,
+        //                Orientation = Orientation.Portrait,
+        //                PaperSize = PaperKind.A4
+        //                },
+        //    Objects = {
+        //                new DinkToPdf.ObjectSettings() {
+        //                PagesCount = true,
+        //                HtmlContent = htmlString,
+        //                WebSettings = { DefaultEncoding = "utf-8" },
+        //                HeaderSettings = {
+        //                   FontSize = 14
+        //                 }
+        //            }
+        //        }
+        //};
 
-        // Use PDFSharp to generate a PDF
-        PdfDocument pdf = PdfGenerator.GeneratePdf(htmlString, PageSize.Letter);
-        pdf.Save(Path.Combine(DebugSavePath, "testDocument.pdf"));
+        //byte[] pdf = converter.Convert(doc);
+        //File.WriteAllBytes(Path.Combine(DebugSavePath, "testPDF.pdf"), pdf);
+
+        //string tempCachePDFPath = Path.Combine(Application.temporaryCachePath, "testPDF.pdf");
+        ////File.WriteAllBytes(tempCachePDFPath, pdf);
+
+        //// Use PDFSharp to generate a PDF
+        //PdfDocument pdf = PdfGenerator.GeneratePdf(htmlString, PageSize.Letter);
+        //pdf.Save(Path.Combine(DebugSavePath, "testDocument.pdf"));
+        ////pdf.Save(Path.Combine(tempCachePDFPath));
+
+        //Debug.LogFormat("DEBUG... PDF build finished...");
+
+        //DialogCanvas.Show("PDF Generated",
+        //    "A PDF has been generated with the content of this form.",
+        //    Accent.Informational,
+        //    "Share",
+        //    "Cancel",
+        //    () => { PdfBuildFinished.Invoke(this, new PDFEventArgs(tempCachePDFPath)); },
+        //    null,
+        //    false);
 
         // Create a new PDF document
         //PdfDocument document = new PdfDocument();
